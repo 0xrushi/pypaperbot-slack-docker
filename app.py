@@ -19,7 +19,9 @@ client = slack.WebClient(token=os.environ['SLACK_TOKEN_'])
 if not os.path.exists("output"):
     os.makedirs("output")
 
-def upload_file_in_background(channel_id, generated_pdf):
+def fetch_and_upload_file_in_background(channel_id, url):
+    subprocess.call(f'PyPaperBot --doi="{url}" --dwn-dir="output/"', shell=True)
+    generated_pdf = glob.glob("output/*.pdf")[0]
     try:
         # Call the files.upload method using the WebClient
         result = client.files_upload(
@@ -39,10 +41,7 @@ def get_from_doi():
     channel_id = data.get('channel_id')
     url = data.get('text')
 
-    subprocess.call(f'PyPaperBot --doi="{url}" --dwn-dir="output/"', shell=True)
-    generated_pdf = glob.glob("output/*.pdf")[0]
-
-    thr = Thread(target=upload_file_in_background, args=[channel_id, generated_pdf])
+    thr = Thread(target=fetch_and_upload_file_in_background, args=[channel_id, url])
     thr.start()
     client.chat_postMessage(channel=channel_id, text="Processing your request")
     return Response(), 200
