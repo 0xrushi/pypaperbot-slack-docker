@@ -1,2 +1,2 @@
 # pypaperbot-slack-docker
-A docker enviornment for a slack https://github.com/ferru97/PyPaperBot on ARM servers 
+A docker enviornment implementing a slack chatbot for [PyPaperBot](https://github.com/ferru97/PyPaperBot) on ARM servers 
