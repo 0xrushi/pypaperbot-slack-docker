@@ -18,4 +18,4 @@ sudo firewall-cmd --reload
 
 ## Add the public ip of the server in the Slack API for / commands
 
-![image](https://user-images.githubusercontent.com/6279035/183801367-2ad73af9-be20-4b08-9e62-c908b13cc804.png)
+![image](https://user-images.githubusercontent.com/6279035/183801561-a218404a-27df-4766-bc75-2299eec4b2f6.png)
