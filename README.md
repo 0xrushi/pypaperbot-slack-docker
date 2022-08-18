@@ -5,6 +5,8 @@ A docker enviornment implementing a slack chatbot for [PyPaperBot](https://githu
 # To host on Oracle ARM
 
 ## Open port 5000
+    Networking -> Virtual Cloud Networks -> vcn-xxyxyyzzz -> Security List Details
+    
 ![image](https://user-images.githubusercontent.com/6279035/183801116-49ca2392-4ff2-418d-a8b0-21acaf3321ae.png)
 
 ## Enable connections on port 5000 through firewall
