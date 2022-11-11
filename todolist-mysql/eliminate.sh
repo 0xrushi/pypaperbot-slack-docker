@@ -1,0 +1,2 @@
+docker rm todolist_db_1 todolist_app_1 todolist_interfaz_1
+docker rmi todolist_app todolist_interfaz
