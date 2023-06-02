@@ -1,0 +1,5 @@
+Flask==2.2.2
+gradio==3.33.0
+python-dotenv==1.0.0
+Requests==2.31.0
+PyPaperBot==1.2.2

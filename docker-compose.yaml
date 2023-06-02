@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  gradio-app:
+    build:
+      context: .
+    ports:
+      - 7861:7861
+    volumes:
+      - ./output:/app/output
+    command: >
+      sh -c "python app.py"
