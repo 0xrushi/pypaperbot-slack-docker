@@ -1,0 +1,2 @@
+celery[redis]
+PyPaperBot==1.2.2
