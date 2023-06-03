@@ -1,7 +1,0 @@
-version: "3"
-services:
-  main:
-    build: .
-    volumes:
-      - .:/root
-    network_mode: "host"
