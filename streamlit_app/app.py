@@ -30,10 +30,16 @@ simple_app = Celery('simple_worker',
 
 
 def main():
-    st.title("Celery Streamlit App")
+    st.title("RequestPaper revanced")
+    examples = ["<select-an-example>", "https://doi.org/10.1007/978-3-319-29799-6"]
+    selected_example = st.selectbox("Select an example", examples, index=0)
 
-    # Get user input
-    url = st.text_input("Enter the DOI URL here", key="url")
+    url = st.empty()
+    if selected_example == examples[1]:
+        url = st.text_input("Enter text", value=examples[1], key = "url")
+    else:
+        # Get user input
+        url = st.text_input("Enter the DOI URL here", key="url")
 
     # Trigger the Celery task
     if st.button("Fetch and Upload"):
@@ -57,16 +63,20 @@ def main():
         status_text.text("Task completed!")
         status_text.text(f"Task result: {result.result}")
         pdf_path, download_status = result.result
-        absolute_path = os.path.abspath(pdf_path)
-        status_text.text("")
-        
-        file_name = pdf_path[7:]
-        formatted_string = "<br>".join([f"{key}: {value}" for key, value in download_status.items()])
+        if pdf_path and download_status:
+            absolute_path = os.path.abspath(pdf_path)
+            status_text.text("")
+            
+            file_name = pdf_path[7:]
+            formatted_string = "<br>".join([f"{key}: {value}" for key, value in download_status.items()])
 
-        st.markdown(f'**{file_name}** <br>{formatted_string}', unsafe_allow_html=True)
+            st.markdown(f'**{file_name}** <br>{formatted_string}', unsafe_allow_html=True)
 
-        file_bytes = open(absolute_path, "rb").read()
-        st.download_button(label="Download PDF", data=file_bytes, file_name=file_name)
+            file_bytes = open(absolute_path, "rb").read()
+            st.download_button(label="Download PDF", data=file_bytes, file_name=file_name)
+        else:
+            st.markdown('**Sorry, couldn\'t find the url**', unsafe_allow_html=True)
+            
 
 
 if __name__ == "__main__":

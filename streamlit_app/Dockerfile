@@ -5,8 +5,8 @@ COPY requirements.txt /
 RUN pip install -r /requirements.txt
 
 #COPY app.py /app.py
-ADD . /flask_app
-WORKDIR /flask_app
+ADD . /streamlit_app
+WORKDIR /streamlit_app
 
 ENV FLASK_ENV=development
 
