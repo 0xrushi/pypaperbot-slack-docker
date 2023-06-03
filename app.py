@@ -16,6 +16,26 @@ os.makedirs(output_dir, exist_ok=True)
 
 csv_file = f"{output_dir}/file_status.csv"
 
+def calculate_total_downloads_today(csv_file):
+    if not os.path.isfile(csv_file):
+        return 0, 0
+    
+    current_date = datetime.date.today()
+    total_downloads = 0
+    total_failed_downloads = 0
+    
+    with open(csv_file, mode="r") as file:
+        reader = csv.reader(file)
+        header = next(reader)  # Skip the header row
+        for row in reader:
+            timestamp = datetime.datetime.strptime(row[2], "%Y-%m-%d %H:%M:%S")
+            if timestamp.date() == current_date:
+                total_downloads += 1
+                if row[1] == "None" or row[1] == "None.pdf":
+                    total_failed_downloads += 1
+    
+    return total_downloads, total_failed_downloads
+
 
 def fetch_and_upload_file(url, ignorethis):
     logging.info("fetch_and_upload_file called")
@@ -37,38 +57,23 @@ def fetch_and_upload_file(url, ignorethis):
     if save_name:
         save_name = save_name.group(1)
 
-    if result == 0 and save_name and save_name != "None":
-        generated_pdf = f"{save_name}.pdf"
+    if result == 0 and save_name and save_name != "None" and save_name != "":
+        generated_pdf = f"{output_dir}/{save_name}.pdf"
         save_to_csv(url, generated_pdf)
-        return generated_pdf
+        
+        total_downloads_today, total_fail_downloads_today = calculate_total_downloads_today(csv_file)
+        # download status
+        ds = {"Total downloads today (ignore % sign)": total_downloads_today/100, "Total failed downloads today": total_fail_downloads_today/100}
+        return generated_pdf, ds
+    
     save_to_csv(url, None)
-    return None
+    return None, None
 
 def save_to_csv(url, file_path):
     timestamp = strftime("%Y-%m-%d %H:%M:%S")
     with open(csv_file, mode="a", newline="") as file:
         writer = csv.writer(file)
         writer.writerow([url, file_path, timestamp])
-
-def calculate_total_downloads_today(csv_file):
-    if not os.path.isfile(csv_file):
-        return 0, 0
-    
-    current_date = datetime.date.today()
-    total_downloads = 0
-    total_failed_downloads = 0
-    
-    with open(csv_file, mode="r") as file:
-        reader = csv.reader(file)
-        header = next(reader)  # Skip the header row
-        for row in reader:
-            timestamp = datetime.datetime.strptime(row[2], "%Y-%m-%d %H:%M:%S")
-            if timestamp.date() == current_date:
-                total_downloads += 1
-                if row[1] == "None" or row[1] == "None.pdf":
-                    total_failed_downloads += 1
-    
-    return total_downloads, total_failed_downloads
 
 def delete_files():
     threshold = 10 * 60  # 10 minutes in seconds
@@ -92,11 +97,10 @@ if __name__ == "__main__":
 
     input_text = gr.inputs.Textbox(lines=2, label="Enter the DOI URL here")
 
-    total_downloads_today, total_fail_downloads_today = calculate_total_downloads_today(csv_file)
-    downloads_status = gr.Label(label="Current Status", value={"Total downloads today (ignore % sign)": total_downloads_today/100, "Total failed downloads today": total_fail_downloads_today/100})
+    downloads_status = gr.Label(label="Current Status")
 
     output_file = gr.outputs.File(label="Download Output")
 
-    iface = gr.Interface(fn=fetch_and_upload_file, inputs=[input_text, downloads_status], outputs=output_file, examples=[["https://doi.org/10.1007/978-3-319-29799-6"]],)
+    iface = gr.Interface(fn=fetch_and_upload_file, inputs=[input_text], outputs=[output_file, downloads_status], examples=[["https://doi.org/10.1007/978-3-319-29799-6"]],)
 
     iface.launch(share=True, server_name="0.0.0.0", server_port=7861)
