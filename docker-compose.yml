@@ -3,6 +3,7 @@ services:
 
   streamlit_app:
     build: './streamlit_app'
+    image: rushichaudhari/paperscraper_streamlitserver:latest
     ports:
       - "8501:8501"
     depends_on:
@@ -22,6 +23,7 @@ services:
 
   simple_worker:
     build: './simple_worker'
+    image: rushichaudhari/paperscraper_celeryworker:latest
     user: nobody
     depends_on:
       - rabbit
