@@ -43,7 +43,7 @@ def calculate_total_downloads_today(csv_file):
     return total_downloads, total_failed_downloads
 
 app = Celery('tasks',
-             broker='amqp://admin:mypass@rabbit:5672',
+             broker='amqp://admin:mypass@rabbit.default.svc.cluster.local:5672',
              backend='rpc://')
 
 

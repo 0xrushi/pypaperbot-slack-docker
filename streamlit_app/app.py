@@ -4,7 +4,7 @@ import time
 import os
 
 simple_app = Celery('simple_worker',
-                    broker='amqp://admin:mypass@rabbit:5672',
+                    broker='amqp://admin:mypass@rabbit.default.svc.cluster.local:5672',
                     backend='rpc://')
 
 def main():
@@ -41,8 +41,9 @@ def main():
         status_text.text("Task completed!")
         status_text.text(f"Task result: {result.result}")
         pdf_path, download_status = result.result
-        if pdf_path and download_status:
+        if pdf_path:
             absolute_path = os.path.abspath(pdf_path)
+        if pdf_path and download_status and os.path.exists(absolute_path):
             status_text.text("")
             
             file_name = pdf_path[7:]
